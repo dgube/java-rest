@@ -48,18 +48,24 @@ public class Requests {
 		ClientResponse response = webResource.path("/posts")
 				.queryParam("userId", userId + "")
 				.accept("application/json").get(ClientResponse.class);
+		if (response.getStatus() != 200) {
+			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+		}
 		return mapper.readValue(response.getEntity(String.class), Post[].class);
 	}
 	
 	public Post createPost(int userId, String title, String body)
 			throws ClientHandlerException, UniformInterfaceException, IOException {
-		Post post = new Post(userId, 1, title, body);
-		ClientResponse response = client
-				   .resource("http://jsonplaceholder.typicode.com/posts")
+		Post post = new Post(userId, 0, title, body);
+		ClientResponse response = webResource.path("/posts")
 				.type("application/json")
 				.post(ClientResponse.class, mapper.writeValueAsString(post));
-//		normally, this should be checked, here return code is always 201, either a bug or just implemented like this
-//		assertTrue("Post request failed : HTTP error code : " + response.getStatus(), response.getStatus() != 201);
+//		normally, this should be checked, here return code is always 201 
+//		but data is correctly returned after post request is "mocked"
+//		probably a bug
+//		if (response.getStatus() == 201) {
+//			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+//		}
 		return mapper.readValue(response.getEntity(String.class), Post.class);
 	}
 

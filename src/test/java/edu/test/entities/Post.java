@@ -1,13 +1,13 @@
 package edu.test.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Post {
 	
 	@JsonProperty("userId")
 	private int userId;
-
+	
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private int id;
 	
 	@JsonProperty("title")
@@ -35,13 +35,11 @@ public class Post {
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
-	
-	@JsonIgnore
+
 	public int getId() {
 		return id;
 	}
 	
-	@JsonProperty
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -64,7 +62,7 @@ public class Post {
 
 	@Override
 	public String toString() {
-		return "Post [userId=" + userId + ", title=" + title + ", body=" + body + "]";
+		return "Post [userId=" + userId + ", id=" + id + ", title=" + title + ", body=" + body + "]";
 	}
 	
 	public boolean hasValidId() {

@@ -3,19 +3,15 @@ package edu.test.javarest;
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
-
 import Services.Requests;
 import edu.test.entities.Post;
 import edu.test.entities.User;
@@ -27,12 +23,6 @@ import junit.framework.TestSuite;
  * Unit test for simple App.
  */
 public class AppTest extends TestCase {
-	/**
-	 * Create the test case
-	 *
-	 * @param testName
-	 *            name of the test case
-	 */
 
 	final Logger logger = Logger.getLogger(AppTest.class);
 
@@ -40,9 +30,6 @@ public class AppTest extends TestCase {
 		super(testName);
 	}
 
-	/**
-	 * @return the suite of tests being tested
-	 */
 	public static Test suite() {
 		return new TestSuite(AppTest.class);
 	}
@@ -68,7 +55,8 @@ public class AppTest extends TestCase {
 
 		assertTrue("Multiple users with id: '" + userId + "' found!", users.length == 1);
 		User user = users[0];
-
+		
+		logger.info("\n" + StringUtils.repeat("=", 100));
 		logger.info("User:" + prettyPrint(user));
 		logger.info("Address:" + prettyPrint(user.getAddress()));
 		logger.info("Email address:" + prettyPrint(user.getEmail()));
@@ -80,17 +68,19 @@ public class AppTest extends TestCase {
 		Post[] existingPosts = requests.getPosts(userId);
 		assertTrue("User with id: " + userId + " has no posts!", existingPosts.length > 0);
 		for (Post post : existingPosts) {
-			logger.info("Post:" + prettyPrint(post));
+			logger.info("Post: " + prettyPrint(post));
 			assertTrue("Post id: '" + post.getId() + "' is not valid!", post.hasValidId());
 			assertTrue("Post title: '" + post.getTitle() + "' is not valid!", post.hasValidTitle());
 			assertTrue("Post body: '" + post.getBody() + "' is not valid!", post.hasValidBody());
 		}
 
-		//		do post with valid title and body
+//		do post with valid title and body
 		String title = "foo";
 		String body = "bar";
 		Post createdPost = requests.createPost(userId, "foo", "bar");
-
+		
+		logger.info("Created post: " + prettyPrint(createdPost));
+		
 		assertTrue("Created post id: '" + createdPost.getId() + "' is not valid!", createdPost.hasValidId());
 
 		assertTrue("Created post title '" + createdPost.getTitle() + "' is not valid!",
@@ -98,10 +88,12 @@ public class AppTest extends TestCase {
 
 		assertTrue("Post body: '" + createdPost.getBody() + "' is not valid!",
 				createdPost.getBody().compareTo(body) == 0);
+		
+		logger.info("\n" + StringUtils.repeat("=", 100));
 	}
 
 	private String prettyPrint(Object object) throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper().configure(MapperFeature.USE_ANNOTATIONS, false);
 		return "\n" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object) + "\n";
 	}
 
