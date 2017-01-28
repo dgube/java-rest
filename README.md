@@ -28,7 +28,7 @@ To install/configure maven plese check: [Maven installation](http://maven.apache
   
 Once setup is done just checkout the project by running:
 
-**_git checkout git@github.com:dgube/java-rest.git_**
+**_git clone https://github.com/dgube/java-rest.git_**
 
 The test can be found under /java-rest/src/test/java/edu/test/javarest/AppTest.java  
   
